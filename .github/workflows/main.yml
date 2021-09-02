@@ -20,5 +20,5 @@ jobs:
             curl -X PATCH \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/refs/tags/$(cat VERSION) \
-            -d '{"sha":"${{ github.sha }}","force":"true"}'
+            -d '{"sha":"${{ github.sha }}","force":true}'
           fi
