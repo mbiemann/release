@@ -7,11 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           [[ -z "$(cat VERSION)" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
-          export RELEASEID=$(echo $(curl -X GET \
-          -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
-          ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$(cat VERSION)) | jq -r '.id')
-          echo $RELEASEID
-          if [[ "$RELEASEID" == "null" ]]; then
+          if [[ "$(echo $(curl -X GET -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$(cat VERSION)) | jq -r '.id')" == "null" ]]; then
             curl -X POST \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/tags \
@@ -23,6 +19,6 @@ jobs:
           else
             curl -X PATCH \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
-            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/$RELEASEID \
-            -d '{"target_commitish":"${{ github.sha }}"}'
+            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/refs/tags/$(cat VERSION) \
+            -d '{"sha":"${{ github.sha }}","force":"true"}'
           fi
