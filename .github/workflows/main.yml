@@ -12,6 +12,7 @@ jobs:
           export VERSION=$(cat VERSION)
           [[ -z "$VERSION" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
           echo $VERSION
+          echo $GITHUB_SHA
         
       - name: Release
         run: |
