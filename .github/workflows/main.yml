@@ -7,25 +7,23 @@ jobs:
       - uses: actions/checkout@v2
       - name: Release
         run: |
-          export VERSION=$(cat VERSION)
-          [[ -z "$VERSION" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
-          echo $VERSION
+          [[ -z "$(cat VERSION)" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
           export RELEASEID=$(echo $(curl -X GET \
           -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
-          ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${VERSION}) | jq -r '.id')
+          ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$(cat VERSION)) | jq -r '.id')
           echo $RELEASEID
           if [[ "$RELEASEID" == "null" ]]; then
             curl -X POST \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/tags \
-            -d '{"tag":"$VERSION","message":"$VERSION","object":"${{ github.sha }}","type":"commit"}'
+            -d '{"tag":"'$(cat VERSION)'","message":"'$(cat VERSION)'","object":"${{ github.sha }}","type":"commit"}'
             curl -X POST \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases \
-            -d '{"tag_name":"${VERSION}","target_commitish":"${{ github.sha }}"}'
+            -d '{"tag_name":"'$(cat VERSION)'","target_commitish":"${{ github.sha }}"}'
           else
             curl -X PATCH \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASEID} \
-            -d '{"target_commitish":"${GITHUB_SHA}"}'
+            -d '{"target_commitish":"${{ github.sha }}"}'
           fi
