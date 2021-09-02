@@ -24,6 +24,6 @@ jobs:
           else
             curl -X PATCH \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
-            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$RELEASEID \
+            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$(cat VERSION) \
             -d '{"target_commitish":"${{ github.sha }}"}'
           fi
