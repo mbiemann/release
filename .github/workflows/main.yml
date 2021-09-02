@@ -17,7 +17,7 @@ jobs:
         run: |
           export RELEASEID=$(echo $(curl -X GET -H "Accept: application/vnd.github.v3+json" \
           ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${VERSION}) | jq -r '.id')
-          if [[ -z "$RELEASEID" ]]; then
+          if [[ "$RELEASEID" == "null" ]]; then
             curl -X POST -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases \
             -d '{"tag_name":"${VERSION}","target_commitish":"${GITHUB_SHA}"}'
