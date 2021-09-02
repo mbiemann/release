@@ -19,6 +19,9 @@ jobs:
           ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${VERSION}) | jq -r '.id')
           if [[ "$RELEASEID" == "null" ]]; then
             curl -X POST -H "Accept: application/vnd.github.v3+json" \
+            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/tags \
+            -d '{"tag":"${VERSION}","message":"${VERSION}","object":"${GITHUB_SHA}","type":"commit"}'
+            curl -X POST -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases \
             -d '{"tag_name":"${VERSION}","target_commitish":"${GITHUB_SHA}"}'
           else
