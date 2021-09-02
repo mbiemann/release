@@ -1,0 +1,26 @@
+name: CI
+on: [push,pull_request,workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v2
+      
+      - name: Get Version
+        run: |
+          export VERSION=$(cat VERSION)
+          echo $VERSION
+        
+      - name: Get Release Id
+        run: |
+          export RELEASEID=$(echo $(curl -X GET -H "Accept: application/vnd.github.v3+json" \
+          ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${VERSION}) | jq -r '.id')
+          echo $RELEASEID
+        
+      - name: Update Release
+        run: |
+          curl -X PATCH -H "Accept: application/vnd.github.v3+json" \
+          ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASEID} \
+          -d '{"target_commitish":"${GITHUB_SHA}"}'
+        
