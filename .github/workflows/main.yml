@@ -5,8 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Release
-        run: |
+      - run: |
           [[ -z "$(cat VERSION)" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
           export RELEASEID=$(echo $(curl -X GET \
           -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
@@ -24,6 +23,6 @@ jobs:
           else
             curl -X PATCH \
             -H "authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github.v3+json" \
-            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/$(cat VERSION) \
+            ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/$RELEASEID \
             -d '{"target_commitish":"${{ github.sha }}"}'
           fi
