@@ -22,7 +22,7 @@ jobs:
             curl -X POST \
             -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/git/tags \
-            -d '{"tag":"${VERSION}","message":"${VERSION}","object":"${GITHUB_SHA}","type":"commit"}'
+            -d '{"tag":"$VERSION","message":"hi","object":"$GITHUB_SHA","type":"commit"}'
             curl -X POST \
             -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" \
             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases \
