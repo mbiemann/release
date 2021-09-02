@@ -4,24 +4,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
       - uses: actions/checkout@v2
-      
-      - name: Version
+      - name: Release
         run: |
           export VERSION=$(cat VERSION)
           [[ -z "$VERSION" ]] && { echo "ERROR: File VERSION not found or empty"; exit 1; }
           echo $VERSION
-        
-      - name: Get Release Id
-        run: |
           export RELEASEID=$(echo $(curl -X GET \
           -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" \
           ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/releases/tags/${VERSION}) | jq -r '.id')
           echo $RELEASEID
-          
-      - name: Set Release
-        run: |
           if [[ "$RELEASEID" == "null" ]]; then
             curl -X POST \
             -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" \
